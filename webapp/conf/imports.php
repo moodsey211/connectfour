@@ -5,4 +5,6 @@
  */
 
 return array('application.components.framework.*',
-             'application.components.helpers.*');
+             'application.components.helpers.*',
+             'application.components.widgets.*',
+             'application.models.*');

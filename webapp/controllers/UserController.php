@@ -11,6 +11,79 @@ final class UserController extends Controller
 
     public function actionLogin()
     {
-        $this -> render('login');
+        if(Yii::app() -> user -> isGuest) {
+            $this -> render('login');
+        } else {
+            $this -> redirect(Url::l('user/dashboard'));
+        }
+    }
+
+    public function actionDashboard()
+    {
+        if(Yii::app() -> user -> isGuest) {
+            $this -> redirect(Url::l('user/login'));
+        }
+        
+        $this -> render('dashboard');
+    }
+    
+    public function actionRegister()
+    {
+        $this -> render('register');
+    }
+
+    public function actionLogout()
+    {
+        Yii::app() -> user -> logout();
+
+        $this -> redirect(Url::l('user/login'));
+    }
+    
+    public function actionDoLogin()
+    {
+        if(!Yii::app() -> user -> isGuest) {
+            $this -> redirect(Url::l('user/dashboard'));
+        }
+        
+        $ident = new UserIdentity($_POST['email'], $_POST['pword']);
+
+        if($ident -> authenticate()) {
+            Yii::app() -> user -> login($ident);
+
+            $this -> redirect(Url::l('user/dashboard'));
+        } else {
+            Yii::app() -> user -> setFlash('notify', TRUE);
+            Yii::app() -> user -> setFlash('notifytype', 'error');
+            Yii::app() -> user -> setFlash('errmsg', $ident -> Message);
+
+            $this -> redirect(Url::l('user/login'));
+        }
+    }
+    
+    public function actionDoRegister()
+    {
+        if(!Yii::app() -> user -> isGuest) {
+            $this -> redirect(Url::l('user/dashboard'));
+        }
+        
+        $u = new User;
+
+        $u -> attributes = $_POST;
+
+        if(!$u -> validate()) {
+            Yii::app() -> user -> setFlash('notify', TRUE);
+            Yii::app() -> user -> setFlash('notifytype', 'error');
+            Yii::app() -> user -> setFlash('errmsg', 'Failed to register.');
+            Yii::app() -> user -> setFlash('errlst', $u -> Errors);
+
+            $this -> redirect(Url::l('user/register'));
+        }
+
+        $u -> save(FALSE);
+        Yii::app() -> user -> setFlash('notify', TRUE);
+        Yii::app() -> user -> setFlash('notifytype', 'success');
+        Yii::app() -> user -> setFlash('errmsg', 'Successfully registered.');
+
+        $this -> redirect(Url::l('user/login'));
     }
 }
