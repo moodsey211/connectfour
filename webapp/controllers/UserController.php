@@ -23,6 +23,10 @@ final class UserController extends Controller
         if(Yii::app() -> user -> isGuest) {
             $this -> redirect(Url::l('user/login'));
         }
+
+        UserStatus::UpdateStatus(UserStatus::IDLE);
+
+        $this -> jstype = self::IDLE;
         
         $this -> render('dashboard');
     }
@@ -85,5 +89,45 @@ final class UserController extends Controller
         Yii::app() -> user -> setFlash('errmsg', 'Successfully registered.');
 
         $this -> redirect(Url::l('user/login'));
+    }
+
+    public function actionStatusIdle()
+    {
+        if(Yii::app() -> user -> isGuest) {
+            $this -> redirect(Url::l('user/login'));
+        }
+        
+        UserStatus::UpdateStatus(UserStatus::IDLE);
+        exit;
+    }
+
+    public function actionStatusSingle()
+    {
+        if(Yii::app() -> user -> isGuest) {
+            $this -> redirect(Url::l('user/login'));
+        }
+        
+        UserStatus::UpdateStatus(UserStatus::SINGLE);
+        exit;
+    }
+
+    public function actionStatusMultiplayer()
+    {
+        if(Yii::app() -> user -> isGuest) {
+            $this -> redirect(Url::l('user/login'));
+        }
+        
+        UserStatus::UpdateStatus(UserStatus::MULTIPLAYER);
+        exit;
+    }
+
+    public function actionStatusChallenge()
+    {
+        if(Yii::app() -> user -> isGuest) {
+            $this -> redirect(Url::l('user/login'));
+        }
+        
+        UserStatus::UpdateStatus(UserStatus::CHALLENGE);
+        exit;
     }
 }
