@@ -16,7 +16,7 @@
         <script src="<?php echo Url::a('js/respond.min.js'); ?>"></script>
         <![endif]-->
     </head>
-    <body>
+    <body data-baseurl="<?php echo Url::l(''); ?>">
         <div class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
@@ -52,6 +52,7 @@
         <?php echo $content; ?>
         <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
         <script src="<?php echo Url::a('js/bootstrap.min.js'); ?>"></script>
+        <script src="<?php echo Url::a('js/shared.js'); ?>"></script>
         <?php if(!Yii::app() -> user -> isGuest): ?>
         <?php if($this -> jstype == 0): ?>
         <script src="<?php echo Url::a('js/dashboard.js'); ?>"></script>

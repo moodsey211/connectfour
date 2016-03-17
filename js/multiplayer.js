@@ -2,11 +2,19 @@ jQuery(document).ready(function(){
     var movesleft = 6 * 7;
     var currmove = 1;
     
+    userstatus = 2; // multiplayer
+    
+    notifyserverofstatus();
+    
+    InitLocalGame();
+    
     whoismoving(currmove);
 
     jQuery('table.gameboard a').on('click', function(){
         fillcolor(currmove, $(this).data('column'));
 
+        RecordMove(currmove, $(this).data('column'));
+        
         movesleft --;
         
         checkwinner(currmove, movesleft);
@@ -51,7 +59,13 @@ rowloop:
 colloop:
         for(col = 1; col < 8; col++) {
             if(checkup(row, col) || checkside(row, col) || checkdiag(row, col)) {
-                msg = 'Player ' + ((player == 1) ? 'one' : 'two') + ' wins.';
+                if(player == 1) {
+                    msg = 'Player one wins.';
+                    WinnerRed();
+                } else {
+                    msg = 'Player two wins.';
+                    LosserRed();
+                }
                 haswinner = 1;
                 break rowloop;
             }
@@ -60,6 +74,7 @@ colloop:
 
     if(haswinner == 0 && remainingmoves == 0) {
         msg = 'This game is a tie.';
+        TieGame();
     }
 
     if(msg != '') {

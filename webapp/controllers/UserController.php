@@ -25,7 +25,8 @@ final class UserController extends Controller
         }
 
         UserStatus::UpdateStatus(UserStatus::IDLE);
-
+        GamePlayed::UpdateStatus();
+        
         $this -> jstype = self::IDLE;
         
         $this -> render('dashboard');
