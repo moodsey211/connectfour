@@ -35,11 +35,11 @@ function InitLocalGame()
     });
 }
 
-function RecordMove(player, cn)
+function RecordMove(player, cn, cnt)
 {
     var baseurl = $('body').data('baseurl');
     
-    jQuery.post({url: baseurl + '/game/recordmove', data: {gameid: gamingid, moveby: player, colnum: cn}});
+    jQuery.post({url: baseurl + '/game/recordmove', data: {gameid: gamingid, moveby: player, colnum: cn, movecnt: cnt}});
 }
 
 function WinnerRed()

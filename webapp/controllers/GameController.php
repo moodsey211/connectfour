@@ -46,6 +46,7 @@ final class GameController extends Controller
         $det -> gameid = $_POST['gameid'];
         $det -> moveby = $_POST['moveby'];
         $det -> colnum = $_POST['colnum'];
+        $det -> movecount = $_POST['movecnt'];
         $det -> movetime_utc = gmdate('c');
         $det -> movetime = date('c');
 
@@ -64,6 +65,20 @@ final class GameController extends Controller
         
         $this -> jstype = self::MULTIPLAYER;
         
-        $this -> render('multiplayer');
+        $this -> render('multiplayer', array('title' => 'Local Game (Multiplayer)'));
+    }
+
+    public function actionSingle()
+    {
+        if(Yii::app() -> user -> isGuest) {
+            $this -> redirect(Url::l('user/login'));
+        }
+
+        UserStatus::UpdateStatus(UserStatus::SINGLE);
+        GamePlayed::UpdateStatus();
+        
+        $this -> jstype = self::SINGLE;
+        
+        $this -> render('multiplayer', array('title' => 'Local Game (Single)'));
     }
 }

@@ -1,8 +1,8 @@
-jQuery(document).ready(function(){
-    var movesleft = 6 * 7;
-    var currmove = 1;
+var movesleft = 6 * 7;
+var currmove = 1;
     
-    userstatus = 2; // multiplayer
+jQuery(document).ready(function(){    
+    userstatus = 1; // single
     
     notifyserverofstatus();
     
@@ -10,29 +10,56 @@ jQuery(document).ready(function(){
     
     whoismoving(currmove);
 
-    jQuery('table.gameboard a').on('click', function(){
-        fillcolor(currmove, $(this).data('column'));
+    jQuery('table.gameboard a').on('click', function() {
+        if(currmove == 2) return;
+        
+        domove($(this).data('column'));
+    });
+});
 
-        RecordMove(currmove, $(this).data('column'), (6 * 7) - movesleft);
+function domove(number)
+{
+    fillcolor(currmove, number);
         
-        movesleft --;
-        
-        checkwinner(currmove, movesleft);
-        
+    RecordMove(currmove, number, (6 * 7) - movesleft);
+    
+    movesleft --;
+    
+    if(!checkwinner(currmove, movesleft)) {
         currmove = (currmove == 1) ? 2 : 1;
 
         whoismoving(currmove);
-    });
-});
+        
+        if(currmove == 2) {
+            computermove();
+        }
+    }
+}
+
+function computermove()
+{
+    var number = 1 + Math.floor(Math.random() * 7);
+    var baseurl = $('body').data('baseurl');
+    
+    jQuery.ajax({url: baseurl + '/game/historymove', data: {gameid: gamingid}, success: function(data) {
+        if(data == '') {
+            domove(number);
+        } else {
+            domove(data);
+        }
+    }, error: function() {
+        domove(number);
+    }});
+}
 
 function whoismoving(currmove)
 {
     var msg = '';
     
     if(currmove == 1) {
-        msg = 'Player one should move';
+        msg = 'Your move.';
     } else {
-        msg = 'Player two should move';
+        msg = "Computer's move.";
     }
     
     $('#whomoves').html(msg);
@@ -80,7 +107,10 @@ colloop:
     if(msg != '') {
         alert(msg);
         window.location.replace($('body').data('baseurl'));
+        return true;
     }
+    
+    return false;
 }
 
 function checkup(row, column)
